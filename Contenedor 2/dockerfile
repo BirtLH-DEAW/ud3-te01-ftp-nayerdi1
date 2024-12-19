@@ -1,0 +1,26 @@
+# Dockerfile para el Contenedor 2: Servidor FTP seguro con TLS
+FROM ubuntu:latest
+
+# Instalar proftpd y herramientas necesarias
+RUN apt-get update && apt-get install -y nano openssl proftpd-mod-crypto
+
+
+RUN mkdir -p /srv/deaw/Recursos-Contenedor-2
+
+COPY recursos/Recursos-Contenedor-2 /srv/deaw/Recursos-Contenedor-2/
+COPY conf/proftpd.conf /etc/proftpd/proftpd.conf
+COPY conf/tls.conf /etc/proftpd/tls.conf
+COPY conf/modules.conf /etc/proftpd/modules.conf
+COPY /certs/proftpd.crt /etc/ssl/certs/proftpd.crt
+COPY /certs/proftpd.key /etc/ssl/private/proftpd.key
+
+# Crear el usuario y su directorio
+RUN useradd deaw --home /srv/deaw --password $( openssl passwd -1 "deaw") -s /usr/sbin/nologin && \
+    chown -R deaw:deaw /srv/deaw
+
+
+# Exponer puertos necesarios
+EXPOSE 21 50000-50030
+
+# Iniciar el servicio
+#CMD ["/usr/sbin/proftpd", "-n"]
