@@ -1,0 +1,20 @@
+# Dockerfile para el Contenedor 1: Servidor FTP con conexión anónima
+FROM ubuntu:latest
+
+# Instalar proftpd
+RUN apt-get update \
+&& apt-get install -y proftpd nano apt-utils
+
+
+# Crear la carpeta
+RUN mkdir -p /srv/ftp/Recursos-Contenedor-1
+
+# Copiar los archivos al contenedor
+COPY recursos/Recursos-Contenedor-1 /srv/ftp/Recursos-Contenedor-1/
+COPY conf/proftpd.conf /etc/proftpd/proftpd.conf
+
+# Exponer puertos necesarios
+EXPOSE 21 50000-50030
+
+
+
